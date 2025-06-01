@@ -4,17 +4,35 @@
 /*
     source klasöründeki tüm dosya ve klasörleri backup.zip ve backup.rar
     olarak destination klasörüne rar'lar
+
+    std::string scriptName = "";
+    std::string scriptPath = "";
+    std::string cmdString = "";
+    std::string cmdMessage = "";
+    getCommandString(scriptName, scriptPath, cmdString, cmdMessage);
 */
-std::string getCommandString(std::string& scriptName, std::string& scriptPath)
+void getCommandString(std::string& scriptName, std::string& scriptPath, std::string& cmdString, std::string& cmdMessage)
 {
     scriptName              = "archiveFilesWithWinRar.bat";
     scriptPath              = "scripts\\" + scriptName;
     std::string destination = "C:\\Temp";
     std::string source      = "C:\\Temp";
 
-    std::string cmdString = scriptPath + " " + destination + " " + source;
+    cmdString = scriptPath + " " + destination + " " + source;
 
-    return cmdString;
+    cmdMessage = scriptName + " baslatiliyor...";
+}
+
+/*
+    cmdString = "ping 127.0.0.1 -n 10";
+
+    std::cout << "ping komutu baslatiliyor...\n";
+*/
+void getCommandString2(std::string& cmdString, std::string& cmdMessage)
+{
+    cmdString = "ping 127.0.0.1 -n 10";
+
+    cmdMessage = "ping komutu baslatiliyor...\n";
 }
 
 int main()
@@ -23,11 +41,14 @@ int main()
 
     std::string scriptName = "";
     std::string scriptPath = "";
-    std::string cmdString = getCommandString(scriptName, scriptPath);
+    std::string cmdString = "";
+    std::string cmdMessage = "";
+    getCommandString(scriptName, scriptPath, cmdString, cmdMessage);
+    getCommandString2(cmdString, cmdMessage);
 
     // -------------------------------------------------------------------
     std::cout << std::endl;
-    std::cout << scriptName << " baslatiliyor..." << std::endl;
+    std::cout << cmdMessage << std::endl;
     std::cout << std::endl;
     // -------------------------------------------------------------------
     {
