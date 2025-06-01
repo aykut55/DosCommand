@@ -2,6 +2,8 @@
 #pragma once
 #include <string>
 #include <thread>
+#include <mutex>
+#include <queue>
 #include <functional>
 #include <windows.h>
 
@@ -21,6 +23,9 @@ public:
     bool WaitForExit(int timeoutMs = INFINITE);
     int GetExitCode() const;
 
+    // Manüel cikti okuma fonksiyonu
+    bool ReadOutputLine(std::string& line);
+
 private:
     void ReadOutputLoop();
     int getExitCode() const;
@@ -33,4 +38,7 @@ private:
     OutputCallback onOutput;
     bool isThreadExitRequested = false;
     int dosCommandExitCode = 0;
+
+    std::mutex outputMutex;
+    std::queue<std::string> outputQueue;
 };

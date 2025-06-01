@@ -87,6 +87,11 @@ void CDosCommand::ReadOutputLoop()
         size_t pos;
         while ((pos = line.find('\n')) != std::string::npos) {
             std::string outLine = line.substr(0, pos);
+            // Kuyruga ekle
+            {
+                std::lock_guard<std::mutex> lock(outputMutex);
+                outputQueue.push(outLine);
+            }
             if (onOutput) onOutput(outLine);
             line.erase(0, pos + 1);
         }
@@ -99,6 +104,15 @@ void CDosCommand::ReadOutputLoop()
     CloseHandle(piProcInfo.hProcess);
     CloseHandle(piProcInfo.hThread);
     isThreadExitRequested = true;
+}
+
+bool CDosCommand::ReadOutputLine(std::string& line) 
+{
+    std::lock_guard<std::mutex> lock(outputMutex);
+    if (outputQueue.empty()) return false;
+    line = outputQueue.front();
+    outputQueue.pop();
+    return true;
 }
 
 void CDosCommand::Stop(bool force) 

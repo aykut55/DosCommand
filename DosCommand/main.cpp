@@ -235,10 +235,105 @@ int main2()
     return 0;
 }
 
+int main3()
+{
+    /*
+        sort komutunu başlatır.
+
+        WriteInput() ile 4 satır veri gönderir.
+
+        \x1A (Ctrl+Z) ile input’u sonlandırır.
+
+        WaitForExit() ile işlemin tamamlanmasını bekler.
+
+        ReadOutputLine() ile sıraya alınmış çıktı satırlarını çeker.
+
+        GetExitCode() ile komutun dönüş kodunu alır.
+    */
+
+    CDosCommand cmd;
+
+    // -------------------------------------------------------------------
+    std::cout << std::endl;
+    std::cout << "sort komutu baslatiliyor...\n";
+    std::cout << std::endl;
+    // -------------------------------------------------------------------
+    {
+        bool started = false;
+        started = cmd.Start("sort", nullptr);
+
+        if (!started)
+        {
+            std::cerr << "Komut baslatilamadi!\n";
+            return 1;
+        }
+    }
+
+    // -------------------------------------------------------------------
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        // Komuta veri gönder
+        std::cout << " elma gonderiliyor...." << std::endl;
+        cmd.WriteInput("elma");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+        std::cout << " armut gonderiliyor..." << std::endl;
+        cmd.WriteInput("armut");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+        std::cout << " muz gonderiliyor....." << std::endl;
+        cmd.WriteInput("muz");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+        std::cout << " kiraz gonderiliyor..." << std::endl;
+        cmd.WriteInput("kiraz");
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+        // Ctrl+Z esdegeri olarak dosya sonu (EOF) vererek sort'u sonlandir
+        std::cout << " Ctrl+Z gonderiliyor...." << std::endl;
+        cmd.WriteInput("\x1A");  // ASCII 26 = Ctrl+Z
+
+
+        // Komutun bitmesini bekliyoruz (5 saniye timeout)
+        if (!cmd.WaitForExit(5000)) {
+            std::cerr << "Komut zaman asimina ugradi. Durduruluyor...\n";
+            cmd.Stop(true);
+        }
+        else {
+            // Güvenli şekilde sonlandır
+            if (cmd.IsRunning())
+                cmd.Stop();
+        }
+
+        // Artık çıktıları sıradan okuyabiliriz
+        std::string line;
+        std::cout << "\n Komuttan gelen sirali ciktilar:\n";
+        while (cmd.ReadOutputLine(line)) {
+            std::cout << ">> " << line << std::endl;
+        }
+
+        // Exit kodunu göster
+        int exitCode = cmd.GetExitCode();
+        std::cout << "\n Komut cikis kodu : " << exitCode << std::endl;
+
+
+    }
+    // -------------------------------------------------------------------
+
+    // -------------------------------------------------------------------
+    std::cout << std::endl;
+    std::cout << "Program tamamlandi.\n";
+    std::cout << std::endl;
+    // -------------------------------------------------------------------
+
+    return 0;
+}
+
 int main()
 {
     enableTurkishEncoding();
 
-    return main2();
+    return main3();
 }
 
